@@ -8,6 +8,10 @@ from text.symbols import symbols
 _symbol_to_id = {s: i for i, s in enumerate(symbols)}
 _id_to_symbol = {i: s for i, s in enumerate(symbols)}
 
+type_set = ('0', '1')
+_type_to_id = {t: i for i, t in enumerate(type_set)}
+_id_to_type = {i: t for i, t in enumerate(type_set)}
+
 # Regular expression matching text enclosed in curly braces:
 _curly_re = re.compile(r'(.*?)\{(.+?)\}(.*)')
 
@@ -25,17 +29,17 @@ def text_to_sequence(text, cleaner_names):
     Returns:
       List of integers corresponding to the symbols in the text
   '''
-  sequence = []
-
-  # Check for curly braces and treat their contents as ARPAbet:
-  while len(text):
-    m = _curly_re.match(text)
-    if not m:
-      sequence += _symbols_to_sequence(_clean_text(text, cleaner_names))
-      break
-    sequence += _symbols_to_sequence(_clean_text(m.group(1), cleaner_names))
-    sequence += _arpabet_to_sequence(m.group(2))
-    text = m.group(3)
+  # sequence = []
+  # # Check for curly braces and treat their contents as ARPAbet:
+  # while len(text):
+  #   m = _curly_re.match(text)
+  #   if not m:
+  #     sequence += _symbols_to_sequence(_clean_text(text, cleaner_names))
+  #     break
+  #   sequence += _symbols_to_sequence(_clean_text(m.group(1), cleaner_names))
+  #   sequence += _arpabet_to_sequence(m.group(2))
+  #   text = m.group(3)
+  sequence = _symbols_to_sequence(text.split(' '))
 
   return sequence
 
@@ -51,6 +55,14 @@ def sequence_to_text(sequence):
         s = '{%s}' % s[1:]
       result += s
   return result.replace('}{', ' ')
+
+
+def type_to_id(type_str):
+  try:
+    type = _type_to_id[type_str]
+  except:
+    type = 0
+  return type
 
 
 def _clean_text(text, cleaner_names):

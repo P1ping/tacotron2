@@ -32,8 +32,10 @@ def init_distributed(hparams, n_gpus, rank, group_name):
     torch.cuda.set_device(rank % torch.cuda.device_count())
 
     # Initialize distributed communication
-    dist.init_process_group(
-        backend=hparams.dist_backend, init_method=hparams.dist_url,
+    # dist.init_process_group(
+    #     backend=hparams.dist_backend, init_method=hparams.dist_url,
+    #     world_size=n_gpus, rank=rank, group_name=group_name)
+    dist.init_process_group(backend='nccl',init_method='env://',
         world_size=n_gpus, rank=rank, group_name=group_name)
 
     print("Done initializing distributed")
@@ -267,7 +269,7 @@ if __name__ == '__main__':
                         help='load model weights only, ignore specified layers')
     parser.add_argument('--n_gpus', type=int, default=1,
                         required=False, help='number of gpus')
-    parser.add_argument('--rank', type=int, default=0,
+    parser.add_argument('--local_rank', type=int, default=0,
                         required=False, help='rank of current gpu')
     parser.add_argument('--group_name', type=str, default='group_name',
                         required=False, help='Distributed group name')
@@ -287,4 +289,4 @@ if __name__ == '__main__':
     print("cuDNN Benchmark:", hparams.cudnn_benchmark)
 
     train(args.output_directory, args.log_directory, args.checkpoint_path,
-          args.warm_start, args.n_gpus, args.rank, args.group_name, hparams)
+          args.warm_start, args.n_gpus, args.local_rank, args.group_name, hparams)
