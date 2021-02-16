@@ -48,7 +48,7 @@ def create_hparams(hparams_string=None, verbose=False):
         n_symbols=len(symbols),
         n_types=len(type_set),
         symbols_embedding_dim=512,
-        intonation_embedding_dim=512,
+        text_embedding_dim=768,
 
         # Encoder parameters
         encoder_kernel_size=5,
